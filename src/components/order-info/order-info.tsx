@@ -13,14 +13,28 @@ export const OrderInfo: FC = () => {
   const ingredients: TIngredient[] = useSelector(
     (state) => state.ingredients.ingredients
   );
+  const { loading: orderLoading, error: orderError } = useSelector(
+    (state) => state.order
+  );
+  const { loading: ingredientsLoading } = useSelector(
+    (state) => state.ingredients
+  );
 
   useEffect(() => {
     if (number) {
       dispatch(fetchOrderByNumber(Number(number)));
     }
   }, [dispatch, number]);
+
   const orderInfo = useMemo(() => {
-    if (!orderData || !ingredients.length) return null;
+    if (
+      !orderData ||
+      !ingredients.length ||
+      ingredientsLoading ||
+      orderLoading
+    ) {
+      return null;
+    }
 
     const date = new Date(orderData.createdAt);
 
@@ -58,7 +72,15 @@ export const OrderInfo: FC = () => {
       date,
       total
     };
-  }, [orderData, ingredients]);
+  }, [orderData, ingredients, ingredientsLoading, orderLoading]);
+
+  if (ingredientsLoading || orderLoading) {
+    return <Preloader />;
+  }
+
+  if (orderError) {
+    return <div>Ошибка загрузки заказа: {orderError}</div>;
+  }
 
   if (!orderInfo) {
     return <Preloader />;

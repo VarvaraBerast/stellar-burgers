@@ -10,7 +10,7 @@ export const Login: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { loading, error } = useSelector((state) => state.user);
+  const { error } = useSelector((state) => state.user);
   const from = location.state?.from || '/';
 
   const handleSubmit = (e: SyntheticEvent) => {
@@ -19,8 +19,7 @@ export const Login: FC = () => {
       .unwrap()
       .then(() => {
         navigate(from, { replace: true });
-      })
-      .catch(() => {});
+      });
   };
 
   return (

@@ -4,25 +4,18 @@ import { useLocation } from 'react-router-dom';
 import { OrderCardProps } from './type';
 import { TIngredient } from '@utils-types';
 import { OrderCardUI } from '../ui/order-card';
-import { useDispatch, useSelector } from '../../services/store';
-import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import { useSelector } from '../../services/store';
 
 const maxIngredients = 6;
 
 export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
   const location = useLocation();
-  const dispatch = useDispatch();
 
   const ingredients: TIngredient[] = useSelector(
     (state) => state.ingredients.ingredients
   );
   const ingredientsLoading = useSelector((state) => state.ingredients.loading);
 
-  useEffect(() => {
-    if (ingredients.length === 0 && !ingredientsLoading) {
-      dispatch(fetchIngredients());
-    }
-  }, [dispatch, ingredients.length, ingredientsLoading]);
   const orderInfo = useMemo(() => {
     if (!ingredients.length) return null;
 

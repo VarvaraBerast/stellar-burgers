@@ -18,6 +18,7 @@ import { ProtectedRoute } from '../protected-route/protected-route';
 import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
 import { fetchUser } from '../../services/slices/userSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 
 const App = () => {
   const location = useLocation();
@@ -26,6 +27,9 @@ const App = () => {
   const background = location.state && location.state.background;
   useEffect(() => {
     dispatch(fetchUser());
+  }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchIngredients());
   }, [dispatch]);
   const handleCloseModal = () => {
     navigate(-1);
@@ -36,6 +40,9 @@ const App = () => {
       <Routes location={background || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
+
+        <Route path='/feed/:number' element={<OrderInfo />} />
+        <Route path='/ingredients/:id' element={<IngredientDetails />} />
 
         <Route
           path='/login'
@@ -88,15 +95,13 @@ const App = () => {
         />
 
         <Route
-          path='/feed/:number'
+          path='/profile/orders/:number'
           element={
             <ProtectedRoute>
               <OrderInfo />
             </ProtectedRoute>
           }
         />
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
-        <Route path='/profile/orders/:number' element={<OrderInfo />} />
 
         <Route path='*' element={<NotFound404 />} />
       </Routes>
@@ -122,9 +127,11 @@ const App = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title='Детали заказа' onClose={handleCloseModal}>
-                <OrderInfo />
-              </Modal>
+              <ProtectedRoute>
+                <Modal title='Детали заказа' onClose={handleCloseModal}>
+                  <OrderInfo />
+                </Modal>
+              </ProtectedRoute>
             }
           />
         </Routes>
